@@ -1,0 +1,11 @@
+# VSCODE/Python stuff
+.vscode
+.vscode/*
+__pycache__
+__pycache__/*
+
+# DLL generation stuff
+*.obj
+*.o
+build/*
+
