@@ -18,7 +18,7 @@ main: $(sources)
 	del *.obj
 
 run:
-	.\main.exe
+	flask --app server run --host=0.0.0.0
 
 dll: $(c_dll_out) 
 
