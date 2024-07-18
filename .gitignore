@@ -9,5 +9,4 @@ __pycache__/*
 *.o
 build/*.exp
 lib/*.lib
-cudart.lib
 
