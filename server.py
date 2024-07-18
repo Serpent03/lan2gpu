@@ -55,11 +55,10 @@ def calculate():
         h1, h2 = len(buf1[0]) if w1 > 0 else 0, len(buf2[0]) if w2 > 0 else 0
 
     # now that all error checking has been done, we can get down to business implementing the CUDA API call.
-    print(f"Processing operation: {optype} with data: \n{buf1}\n{buf2}")
+    print(f"Processing operation: {optype} with data: \n{(w1, h1)}\n{(w2, h2)}")
 
     replyJson = {"optype": optype, "result": []}
     replyJson['result'] = taskList[optype](
         buf1) if optype in single_buffer_optypes else taskList[optype](buf1, buf2)
-    print(f"Output data: {replyJson['result']}")
 
     return make_response(jsonify(replyJson), 200)

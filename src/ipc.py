@@ -33,8 +33,7 @@ class ipc():
         try:
             assert len(buf1) == len(buf2) and len(buf1[0]) == len(buf2[0]), "Buffers have unequal dimensions"
         except Exception:
-            traceback.print_exc()
-            return [[]]
+            return traceback.print_exc()
         self.lib.matadd.argtypes = (ctypes.POINTER(ctypes.POINTER(ctypes.c_float)), ctypes.POINTER(ctypes.POINTER(ctypes.c_float)), ctypes.c_int, ctypes.c_int)
         self.lib.matadd.restype = (ctypes.POINTER(ctypes.POINTER(ctypes.c_float)))
         buf1, r, c = self.list_to_ctypes_2d(buf1)

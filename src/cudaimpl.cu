@@ -25,7 +25,20 @@ void cuda_mat_add(float *mat1, float *mat2, float *res, int r, int c) {
   cudaMemcpy(d_a, mat1, r * c * sizeof(float), cudaMemcpyHostToDevice);
   cudaMemcpy(d_b, mat2, r * c * sizeof(float), cudaMemcpyHostToDevice);
 
-  _cuda_mat_add<<<1, r * c>>>(d_a, d_b, d_out, r * c);
+  /* threadCount limit of ~1024. Can't launch with just that - we can use the 2^31 - 1 blocks instead... :) 
+  we first take the total size {r * c}, and because dividing it by 256 might not cover all the cases, add one.
+  eg: row, col = 100, 100 => 10000 separate elements
+  10000 / 256(threads per block) => ~39
+  39 * 256 = 9984 different threads -- which does **not** cover all the separate elements.
+
+  So: 
+  => 10000 / 256 + 255 / 256
+  => ~(39 + 0.9)
+  => ~(40.8)
+  => ~40. 40 * 256 = 10240, which is enough to cover all elements. */
+  uint16 threadsPerBlock = 256;
+  int32 blockCount = (r * c + threadsPerBlock - 1) / threadsPerBlock;
+  _cuda_mat_add<<<blockCount, threadsPerBlock>>>(d_a, d_b, d_out, r * c);
 
   cudaMemcpy(res, d_out, r * c * sizeof(float), cudaMemcpyDeviceToHost);
 
