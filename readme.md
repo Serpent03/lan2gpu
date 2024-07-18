@@ -51,6 +51,7 @@ sequenceDiagram
     activate B
     B->>C:Serialize
     activate C
+    Note over C: Flattened data makes <br> compute easier
     C->>B: Return result
     deactivate C
     B->>A: Deserialize
