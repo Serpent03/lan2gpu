@@ -12,16 +12,18 @@ typedef int int32;
 typedef long unsigned int uint64;
 typedef long int int64;
 
-enum TYPE { CHAR, UCHAR, USHORTINT, SHORTINT, INT, UINT, FLOAT, DOUBLE };
-
 /**
- * Based on the enum TYPE we can gather what the element size of buffer1 and
- * buffer2 would be.
- * @param buffer1 One of the buffers to pass
- * @param buffer2 One of the buffers to pass
- * @param n1 The length of buffer1
- * @param n2 The length of buffer2
- * @param type The type of element each buffer has
+ * Call the CUDA wrappe for adding matrices.
+ * @param mat1 One of the buffers to pass
+ * @param mat2 One of the buffers to pass
+ * @param res The resulting buffer
+ * @param r Number of rows
+ * @param c Number of columns
  */
-// extern void cuda_entry(void *buffer1, void *buffer2, size_t n1, size_t n2,
-// enum TYPE type);
+#ifdef __cplusplus
+extern "C" void cuda_mat_add(float *mat1, float *mat2, float *res, int r, int c);
+#else
+extern void cuda_mat_add(float *mat1, float *mat2, float *res, int r, int c);
+#endif
+
+/* since C and C++(CUDA C++) import headers in a different fashion. */

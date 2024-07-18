@@ -7,5 +7,5 @@ __pycache__/*
 # DLL generation stuff
 *.obj
 *.o
-build/*
+build/*.exp
 
