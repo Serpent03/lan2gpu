@@ -45,17 +45,17 @@ sequenceDiagram
     box Gray GPU CUDA Code
     participant C
     end
-    USER->>A: HTTP Request
+    USER->>A: HTTP Request With Query
     activate A
-    A->>B: Parsed Data
+    A->>B: Parsed Query
     activate B
-    B->>C:Data Transfer
+    B->>C:Serialize
     activate C
     C->>B: Return result
     deactivate C
-    B->>A: Return result
+    B->>A: Deserialize
     deactivate B
-    A->>USER: Computed Data
+    A->>USER: HTTP Response With Data
     deactivate A
 ```
 
