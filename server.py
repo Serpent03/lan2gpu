@@ -1,6 +1,14 @@
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, jsonify
+import src.ipc as ipc
 
 app = Flask(__name__)
+
+gpu = ipc.ipc("./build/comp.dll")
+taskList = {
+    "MAT_ADD": gpu.mat_add,
+    "MAT_MULT": gpu.mat_mult,
+    "TRANSPOSE": gpu.traspose,
+}
 
 
 @app.route('/')
@@ -21,7 +29,7 @@ def calculate():
     data = request.get_json()
     if data.get('optype', None) is None:
         return make_response("No operation specified!", 400)
-    
+
     optype = data['optype']
     buf1 = []
     buf2 = []
@@ -47,5 +55,11 @@ def calculate():
         h1, h2 = len(buf1[0]) if w1 > 0 else 0, len(buf2[0]) if w2 > 0 else 0
 
     # now that all error checking has been done, we can get down to business implementing the CUDA API call.
-    print(optype, buf1, (w1, h1), buf2, (w2, h2))
-    return make_response("All OK!", 200)
+    print(f"Processing operation: {optype} with data: \n{buf1}\n{buf2}")
+
+    replyJson = {"optype": optype, "result": []}
+    replyJson['result'] = taskList[optype](
+        buf1) if optype in single_buffer_optypes else taskList[optype](buf1, buf2)
+    print(f"Output data: {replyJson['result']}")
+
+    return make_response(jsonify(replyJson), 200)

@@ -56,16 +56,3 @@ class ipc():
         self.lib.free_memory.argtypes = (ctypes.POINTER(ctypes.POINTER(ctypes.c_float)), ctypes.c_int)
         self.lib.free_memory.restype = None
         self.lib.free_memory(buf, rows)
-
-_ipc = ipc("./build/comp.dll")
-mat = [[1, 1, 1], [3, 2, 1]]
-mat2 = [[1, 1, 1], [0, 0, 0]]
-result = _ipc.mat_add(mat, mat2)
-for i in mat:
-    print(i)
-print()
-for i in mat2:
-    print(i)
-print()
-for i in result:
-    print(i)
