@@ -8,4 +8,6 @@ __pycache__/*
 *.obj
 *.o
 build/*.exp
+lib/*.lib
+cudart.lib
 
