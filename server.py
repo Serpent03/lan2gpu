@@ -7,7 +7,7 @@ gpu = ipc.ipc("./build/comp.dll")
 taskList = {
     "MAT_ADD": gpu.mat_add,
     "MAT_MULT": gpu.mat_mult,
-    "TRANSPOSE": gpu.traspose,
+    "MAT_TRANSPOSE": gpu.transpose,
 }
 
 

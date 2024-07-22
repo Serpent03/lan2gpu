@@ -6,19 +6,38 @@
 /* for the sake of simplicity, all ops wil be done in float, and then can be
  * converted at the python end if needed. */
 
-__declspec(dllexport) float **transpose(float **mat, float r, float c) {
+void flatten_mat(float **mat, float *out, int r, int c) {
+  for (int i = 0; i < r; i++) {
+    memcpy(&out[i * c], mat[i], c * sizeof(float));
+  }
+}
+
+void inflate_mat(float *buf, float **out, int r, int c) {
+  for (int i = 0; i < r; i++) {
+    out[i] = (float *)malloc(c * sizeof(float));
+    memcpy(out[i], &buf[i * c], c * sizeof(float));
+  }
+}
+
+__declspec(dllexport) float **transpose(float **mat, int r, int c) {
   /* call the CUDA entry point from here. */
   float **res = (float **)malloc(
       c * sizeof(float *)); // cudamalloc()  the res. deal with it over there
                             // and then return it back to RAM.
-  for (int i = 0; i < c; i++) {
-    res[i] = (float *)malloc(r * sizeof(float));
-  }
-  for (int i = 0; i < c; i++) {
-    for (int j = 0; j < r; j++) {
-      res[i][j] = mat[j][i];
-    }
-  }
+
+  float *b1, *cudaRes;
+  b1 = (float *)malloc(r * c * sizeof(float));
+  cudaRes = (float *)malloc(r * c * sizeof(float));
+
+  flatten_mat(mat, b1, r, c);            // flatten mat[][] into b1[]
+  cuda_mat_transpose(b1, cudaRes, r, c); // call CUDA
+  free(b1);
+
+  inflate_mat(
+      cudaRes, res, c,
+      r); // invert rows and cols, because we've just transposed the array.
+  free(cudaRes);
+
   return res;
 }
 
@@ -31,20 +50,14 @@ __declspec(dllexport) float **matadd(float **mat1, float **mat2, int r, int c) {
   b2 = (float *)malloc(r * c * sizeof(float));
   cudaRes = (float *)malloc(r * c * sizeof(float));
 
-  for (int i = 0; i < r; i++) {
-    memcpy(&b1[i * c], mat1[i], c * sizeof(float));
-    memcpy(&b2[i * c], mat2[i], c * sizeof(float));
-  }
-
+  flatten_mat(mat1, b1, r, c);
+  flatten_mat(mat2, b2, r, c);
   cuda_mat_add(b1, b2, cudaRes, r, c);
   free(b1);
   free(b2);
 
   /* after the GPU operation has been done, just rebuild the structure again. */
-  for (int i = 0; i < r; i++) {
-    res[i] = (float *)malloc(c * sizeof(float));
-    memcpy(res[i], &cudaRes[i * c], c * sizeof(float));
-  }
+  inflate_mat(cudaRes, res, r, c);
   free(cudaRes);
   return res;
 }

@@ -17,7 +17,7 @@ class ipc():
             c_arr[i] = ctypes.cast(row, ctypes.POINTER(ctypes.c_float))
         return c_arr, r, c
 
-    def traspose(self, buf1: list[list[float]]) -> list[list[float]]:
+    def transpose(self, buf1: list[list[float]]) -> list[list[float]]:
         self.lib.transpose.argtypes = (ctypes.POINTER(ctypes.POINTER(ctypes.c_float)), ctypes.c_int, ctypes.c_int)
         self.lib.transpose.restype = (ctypes.POINTER(ctypes.POINTER(ctypes.c_float)))
         buf1, r, c = self.list_to_ctypes_2d(buf1)
@@ -32,8 +32,8 @@ class ipc():
         # dimensions of both buf1 and buf2 **MUST** be the same for matrix addition.
         try:
             assert len(buf1) == len(buf2) and len(buf1[0]) == len(buf2[0]), "Buffers have unequal dimensions"
-        except Exception:
-            return traceback.print_exc()
+        except Exception as e:
+            return f"RuntimeException: {e}"
         self.lib.matadd.argtypes = (ctypes.POINTER(ctypes.POINTER(ctypes.c_float)), ctypes.POINTER(ctypes.POINTER(ctypes.c_float)), ctypes.c_int, ctypes.c_int)
         self.lib.matadd.restype = (ctypes.POINTER(ctypes.POINTER(ctypes.c_float)))
         buf1, r, c = self.list_to_ctypes_2d(buf1)
