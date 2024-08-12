@@ -21,7 +21,7 @@ def ping():
     return 'pong'
 
 
-@app.route('/saap_ka_billa', methods=['GET'])
+@app.route('/compute', methods=['GET'])
 def calculate():
     # the basic tenet of this function is to return an output array, given two input arrays
     if not request.is_json:
@@ -55,7 +55,8 @@ def calculate():
         h1, h2 = len(buf1[0]) if w1 > 0 else 0, len(buf2[0]) if w2 > 0 else 0
 
     # now that all error checking has been done, we can get down to business implementing the CUDA API call.
-    print(f"Processing operation: {optype} with data: \n{(w1, h1)}\n{(w2, h2)}")
+    print(
+        f"Processing operation: {optype} with data: \n{(w1, h1)}\n{(w2, h2)}")
 
     replyJson = {"optype": optype, "result": []}
     replyJson['result'] = taskList[optype](

@@ -12,6 +12,12 @@ cuda_dll_source = src/cudaimpl.cu
 cuda_libs = lib/*
 cuda_obj = cuda.obj
 
+# make sure to launch this makefile through Visual Studio developer prompt
+# in administrator mode for the nvcc to work correctly. 
+
+# also, make sure to make a directory named "build" if it does not already exist
+# otherwise you will not get the desired dll output.
+
 run:
 	flask --app server run --host=0.0.0.0
 

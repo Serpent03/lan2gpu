@@ -33,9 +33,8 @@ __declspec(dllexport) float **transpose(float **mat, int r, int c) {
   cuda_mat_transpose(b1, cudaRes, r, c); // call CUDA
   free(b1);
 
-  inflate_mat(
-      cudaRes, res, c,
-      r); // invert rows and cols, because we've just transposed the array.
+  // invert rows and cols, because we've just transposed the array.
+  inflate_mat(cudaRes, res, c, r);
   free(cudaRes);
 
   return res;

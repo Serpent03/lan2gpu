@@ -42,11 +42,11 @@ extern "C" void cuda_mat_add(float *mat1, float *mat2, float *res, int r,
   separate elements.
 
   So:
-  => 10000 / 256 + 255 / 256
-  => ~(39 + 0.9)
+  => (10000 + 255) / 256
+  => ~(39.9 + 0.9)
   => ~(40.8)
   => ~40; 40 * 256 = 10240, which is enough to cover all elements. */
-  // uint16 THREADS_PER_BLOCK = 256;
+
   int32 blockCount = (r * c + THREADS_PER_BLOCK - 1) / THREADS_PER_BLOCK;
   _cuda_mat_add<<<blockCount, THREADS_PER_BLOCK>>>(d_a, d_b, d_out, r * c);
 
